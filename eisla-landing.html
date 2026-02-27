@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eisla — From words to boards</title>
+<meta name="description" content="Describe your project in plain English. We design the PCB and arrange manufacturing. You receive boards. No engineering knowledge required.">
+<meta property="og:title" content="Eisla — From words to boards">
+<meta property="og:description" content="AI-powered PCB design and manufacturing. Describe it. We build it.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<style>
+:root {
+  --copper: #C27840;
+  --copper-light: #C27840;
+  --copper-pale: #F5E6D5;
+  --teal: #0E3D3F;
+  --teal-mid: #0E3D3F;
+  --teal-light: #0E3D3F;
+  --cream: #FDF8F0;
+  --dark: #1A1A1A;
+  --mid: #666666;
+  --white: #FFFFFF;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--dark);
+  background: var(--cream);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  background: var(--teal);
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.018) 39px, rgba(255,255,255,0.018) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.018) 39px, rgba(255,255,255,0.018) 40px);
+  pointer-events: none;
+}
+/* Decorative copper traces */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  right: -5%;
+  width: 500px;
+  height: 500px;
+  border: 2px solid rgba(194,120,64,0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 120px 40px 80px;
+  width: 100%;
+}
+.hero-logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+  animation: fadeDown 0.8s ease both;
+}
+.hero-logo svg { flex-shrink: 0; }
+.hero-wordmark {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: 3px;
+}
+.hero h1 {
+  font-size: clamp(36px, 5.5vw, 68px);
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1.15;
+  max-width: 800px;
+  margin-bottom: 24px;
+  animation: fadeDown 0.8s 0.15s ease both;
+}
+.hero h1 strong {
+  font-weight: 700;
+  color: var(--copper-light);
+}
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: rgba(250,246,241,0.7);
+  max-width: 560px;
+  line-height: 1.6;
+  margin-bottom: 48px;
+  animation: fadeDown 0.8s 0.3s ease both;
+}
+
+/* Waitlist form */
+.waitlist {
+  display: flex;
+  gap: 12px;
+  max-width: 480px;
+  animation: fadeDown 0.8s 0.45s ease both;
+}
+.waitlist input {
+  flex: 1;
+  padding: 16px 20px;
+  border: 2px solid rgba(250,246,241,0.15);
+  border-radius: 8px;
+  background: rgba(250,246,241,0.06);
+  color: var(--cream);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.waitlist input::placeholder { color: rgba(250,246,241,0.35); }
+.waitlist input:focus { border-color: var(--copper-light); }
+.waitlist button {
+  padding: 16px 28px;
+  background: var(--copper);
+  color: var(--cream);
+  border: none;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.3s, transform 0.2s;
+}
+.waitlist button:hover { background: var(--copper-light); transform: translateY(-1px); }
+.waitlist-note {
+  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  color: rgba(250,246,241,0.35);
+  margin-top: 12px;
+  animation: fadeDown 0.8s 0.55s ease both;
+}
+.waitlist-success {
+  display: none;
+  padding: 16px 20px;
+  background: rgba(194,120,64,0.15);
+  border: 1px solid rgba(194,120,64,0.3);
+  border-radius: 8px;
+  color: var(--copper-light);
+  font-weight: 500;
+  max-width: 480px;
+}
+
+/* ===== SECTION SHARED ===== */
+section { padding: 100px 40px; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-label {
+  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  color: var(--teal);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+.section-desc {
+  font-size: 17px;
+  color: var(--mid);
+  max-width: 620px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+/* ===== HOW IT WORKS ===== */
+.how { background: var(--white); }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal-light), var(--copper));
+  z-index: 0;
+}
+.step {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  padding: 0 16px;
+}
+.step-num {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 auto 20px;
+  border: 4px solid var(--white);
+  box-shadow: 0 4px 20px rgba(14,61,63,0.15);
+}
+.step-num.copper { background: var(--copper); }
+.step h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+.step p {
+  font-size: 14px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+
+/* ===== PRICING ===== */
+.pricing { background: var(--cream); }
+.price-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.price-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 36px 28px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s, transform 0.3s;
+  position: relative;
+}
+.price-card:hover { border-color: var(--copper-light); transform: translateY(-4px); }
+.price-card.featured {
+  border-color: var(--copper);
+  box-shadow: 0 8px 40px rgba(194,120,64,0.12);
+}
+.price-card.featured::before {
+  content: 'MOST COMMON';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--copper);
+  color: var(--cream);
+  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 16px;
+  border-radius: 20px;
+}
+.price-tier {
+  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal-light);
+  margin-bottom: 8px;
+}
+.price-amount {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 4px;
+}
+.price-amount span { font-size: 20px; font-weight: 400; color: var(--mid); }
+.price-label {
+  font-size: 14px;
+  color: var(--mid);
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+.price-features { list-style: none; }
+.price-features li {
+  font-size: 14px;
+  color: var(--dark);
+  padding: 6px 0;
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.5;
+}
+.price-features li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--copper);
+}
+.price-note {
+  text-align: center;
+  margin-top: 32px;
+  font-size: 15px;
+  color: var(--mid);
+  line-height: 1.7;
+}
+.price-note strong { color: var(--teal); }
+
+/* ===== STORY ===== */
+.story { background: var(--teal); color: var(--cream); }
+.story .section-label { color: var(--copper-light); }
+.story .section-title { color: var(--cream); }
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 60px;
+  align-items: center;
+}
+.story-text {
+  font-size: 17px;
+  line-height: 1.8;
+  color: rgba(250,246,241,0.8);
+}
+.story-text em {
+  color: var(--copper-light);
+  font-style: normal;
+  font-weight: 500;
+}
+.story-quote {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--cream);
+  border-left: 3px solid var(--copper);
+  padding-left: 24px;
+  margin-top: 32px;
+}
+.story-quote strong { color: var(--copper-light); font-weight: 600; }
+
+/* ===== DIFFERENTIATORS ===== */
+.diff { background: var(--white); }
+.diff-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.diff-card {
+  padding: 32px;
+  border-radius: 16px;
+  background: var(--cream);
+  border: 1px solid rgba(14,61,63,0.08);
+}
+.diff-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.diff-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+.diff-card p {
+  font-size: 14px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+
+/* ===== CTA / FOOTER ===== */
+.cta {
+  background: var(--cream);
+  text-align: center;
+  padding: 80px 40px 60px;
+}
+.cta .section-title { margin-left: auto; margin-right: auto; }
+.cta .section-desc { margin-left: auto; margin-right: auto; text-align: center; }
+.cta .waitlist { margin: 0 auto; justify-content: center; }
+.cta .waitlist-note { text-align: center; }
+
+.footer {
+  background: var(--teal);
+  padding: 32px 40px;
+  text-align: center;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-text {
+  font-size: 13px;
+  color: rgba(250,246,241,0.4);
+}
+.footer-text a { color: var(--copper-light); text-decoration: none; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .steps { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+  .steps::before { display: none; }
+  .price-cards { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+  .story-grid { grid-template-columns: 1fr; }
+  .diff-grid { grid-template-columns: 1fr; }
+  .waitlist { flex-direction: column; }
+  .footer-inner { flex-direction: column; gap: 12px; }
+}
+@media (max-width: 600px) {
+  section { padding: 60px 24px; }
+  .hero-inner { padding: 100px 24px 60px; }
+  .steps { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-logo">
+      <svg viewBox="0 0 80 80" width="56" height="56" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="10" width="11" height="60" rx="3" fill="#C27840"/>
+        <rect x="23" y="10" width="34" height="11" rx="3" fill="#C27840"/>
+        <rect x="23" y="34.5" width="26" height="11" rx="3" fill="#C27840"/>
+        <rect x="23" y="59" width="34" height="11" rx="3" fill="#C27840"/>
+        <circle cx="62" cy="15.5" r="6" fill="#C27840"/><circle cx="62" cy="15.5" r="2.5" fill="#0E3D3F"/>
+        <circle cx="54" cy="40" r="6" fill="#C27840"/><circle cx="54" cy="40" r="2.5" fill="#0E3D3F"/>
+        <circle cx="62" cy="64.5" r="6" fill="#C27840"/><circle cx="62" cy="64.5" r="2.5" fill="#0E3D3F"/>
+      </svg>
+      <span class="hero-wordmark">Eisla</span>
+    </div>
+    <h1>Describe your project.<br><strong>We build the board.</strong></h1>
+    <p class="hero-sub">From a plain-English description to a manufactured circuit board, delivered to your door. No engineering knowledge required.</p>
+    <form class="waitlist" id="waitlistTop" onsubmit="return handleWaitlist(this)">
+      <input type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+      <button type="submit">Join the waitlist</button>
+    </form>
+    <p class="waitlist-note">Launching April 2026. Be first in line.</p>
+    <div class="waitlist-success" id="successTop">You're on the list. We'll be in touch soon.</div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="how">
+  <div class="section-inner">
+    <div class="section-label reveal">How it works</div>
+    <h2 class="section-title reveal">Four steps. Zero engineering.</h2>
+    <p class="section-desc reveal">You describe what you need. We handle everything else &mdash; from component selection to manufacturing and delivery.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Describe</h3>
+        <p>Tell us what your project needs in plain English. &ldquo;A temperature logger with WiFi that runs on a LiPo battery.&rdquo;</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>Review</h3>
+        <p>We show you a 3D render and a plain-English summary. No schematics, no Gerbers. Change anything with a sentence.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num copper">3</div>
+        <h3>Choose your fab</h3>
+        <p>See side-by-side quotes from JLCPCB, PCBWay, PCBTrain, and Eurocircuits. Pick the price and speed that suits you.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num copper">4</div>
+        <h3>Receive boards</h3>
+        <p>We place the order and manage delivery. Your manufactured, assembled boards arrive at your door.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="pricing">
+  <div class="section-inner">
+    <div class="section-label reveal">Transparent pricing</div>
+    <h2 class="section-title reveal">Per project. No subscription.</h2>
+    <p class="section-desc reveal">One price for the design. You choose your manufacturer. Manufacturing cost quoted separately at checkout &mdash; you see exactly what you pay.</p>
+    <div class="price-cards">
+      <div class="price-card reveal">
+        <div class="price-tier">Tier 1</div>
+        <div class="price-amount">&pound;499 <span>/ project</span></div>
+        <div class="price-label">Simple MCUs (ATmega, ESP8266, STM32F0)</div>
+        <ul class="price-features">
+          <li>4-layer PCB, fully assembled</li>
+          <li>AI-powered design pipeline</li>
+          <li>3D render review step</li>
+          <li>Multi-fab quoting</li>
+          <li>First revision free</li>
+        </ul>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="price-tier">Tier 2</div>
+        <div class="price-amount">&pound;599 <span>/ project</span></div>
+        <div class="price-label">Standard MCUs (ESP32, RP2040, nRF52840)</div>
+        <ul class="price-features">
+          <li>Everything in Tier 1</li>
+          <li>4-hour engineer review</li>
+          <li>QFN &amp; complex packages</li>
+          <li>WiFi, BLE, USB HS capable</li>
+          <li>10% off for returning customers</li>
+        </ul>
+      </div>
+      <div class="price-card reveal">
+        <div class="price-tier">Tier 3</div>
+        <div class="price-amount">&pound;749 <span>/ project</span></div>
+        <div class="price-label">Advanced MCUs (STM32H7, i.MX RT LQFP)</div>
+        <ul class="price-features">
+          <li>Everything in Tier 2</li>
+          <li>6-hour engineer review</li>
+          <li>High pin-count LQFP</li>
+          <li>Complex multi-domain power</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+    <p class="price-note reveal">
+      <strong>Manufacturing quoted separately at checkout.</strong> Choose from JLCPCB, PCBWay, PCBTrain, or Eurocircuits.<br>
+      Typical 5-board prototype: &pound;140&ndash;&pound;450 depending on fab and shipping speed.
+    </p>
+  </div>
+</section>
+
+<!-- ===== DIFFERENTIATORS ===== -->
+<section class="diff">
+  <div class="section-inner">
+    <div class="section-label reveal">Why Eisla</div>
+    <h2 class="section-title reveal">Not another design tool.</h2>
+    <p class="section-desc reveal">Every existing PCB tool requires engineering knowledge. Eisla doesn't. And unlike tools, we actually order and deliver your boards.</p>
+    <div class="diff-grid">
+      <div class="diff-card reveal">
+        <div class="diff-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C27840" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>Zero EDA knowledge</h3>
+        <p>You never see a schematic, netlist, or Gerber file. The review step is a 3D render and a plain-English summary.</p>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C27840" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <h3>Engineer reviewed</h3>
+        <p>Tier 2 and Tier 3 designs are reviewed by a qualified electronics engineer before manufacturing. Real quality gate.</p>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C27840" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5a2 2 0 01-2 2h-1"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <h3>We deliver boards</h3>
+        <p>We don't just design. We place the manufacturing order on your behalf and manage delivery to your door.</p>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C27840" stroke-width="2" stroke-linecap="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <h3>Multi-fab choice</h3>
+        <p>At checkout you see side-by-side quotes from JLCPCB, PCBWay, PCBTrain, and Eurocircuits. You pick.</p>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C27840" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </div>
+        <h3>No subscription</h3>
+        <p>Per-project pricing. No monthly fee. Need one board? Pay for one board. Come back when you need another.</p>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C27840" stroke-width="2" stroke-linecap="round"><path d="M23 4l-6 6-4-4-8 8"/><path d="M17 4h6v6"/></svg>
+        </div>
+        <h3>Repeat discount</h3>
+        <p>10% off your design fee when you come back within 6 months. Auto-emailed code after delivery. Loyalty rewarded.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STORY ===== -->
+<section class="story">
+  <div class="section-inner">
+    <div class="story-grid">
+      <div>
+        <div class="section-label reveal">Why "Eisla"?</div>
+        <h2 class="section-title reveal">Named after the inventor of the PCB.</h2>
+        <div class="story-quote reveal">
+          Where Eisler believed electronics should be <strong>printed, not wired</strong> &mdash; we believe they should be <strong>described, not designed.</strong>
+        </div>
+      </div>
+      <div class="story-text reveal">
+        In 1936, an Austrian refugee named <em>Paul Eisler</em> sat in a London boarding house with a radical idea: what if electronics could be printed rather than hand-wired?<br><br>
+        He built the world's first printed circuit board &mdash; the invention that makes every modern electronic device possible. He sold the rights for &pound;1 and wasn't recognised as the inventor for 35 years.<br><br>
+        Eisla carries his name forward. Tell us what you need in plain English. Our AI handles the engineering. A qualified engineer reviews the design. Your board arrives at your door.<br><br>
+        The copper in our brand is the copper on every PCB. The name is a promise that Eisler's vision &mdash; <em>electronics accessible to everyone</em> &mdash; is finally being fulfilled.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta">
+  <div class="section-inner">
+    <div class="section-label reveal">Get early access</div>
+    <h2 class="section-title reveal">Ready to build something?</h2>
+    <p class="section-desc reveal">Join the waitlist. We launch in April 2026. Early signups get priority access and promotional pricing.</p>
+    <form class="waitlist reveal" id="waitlistBottom" onsubmit="return handleWaitlist(this)">
+      <input type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+      <button type="submit">Join the waitlist</button>
+    </form>
+    <p class="waitlist-note reveal">No spam. Just one email when we launch.</p>
+    <div class="waitlist-success" id="successBottom">You're on the list. We'll be in touch soon.</div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-text">
+      <svg viewBox="0 0 80 80" width="20" height="20" style="vertical-align: middle; margin-right: 6px;" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="10" width="11" height="60" rx="3" fill="#C27840"/>
+        <rect x="23" y="10" width="34" height="11" rx="3" fill="#C27840"/>
+        <rect x="23" y="34.5" width="26" height="11" rx="3" fill="#C27840"/>
+        <rect x="23" y="59" width="34" height="11" rx="3" fill="#C27840"/>
+        <circle cx="62" cy="15.5" r="6" fill="#C27840"/><circle cx="62" cy="15.5" r="2.5" fill="#0E3D3F"/>
+        <circle cx="54" cy="40" r="6" fill="#C27840"/><circle cx="54" cy="40" r="2.5" fill="#0E3D3F"/>
+        <circle cx="62" cy="64.5" r="6" fill="#C27840"/><circle cx="62" cy="64.5" r="2.5" fill="#0E3D3F"/>
+      </svg>
+      <strong style="color: var(--copper-light);">Eisla</strong> &mdash; from words to boards.
+    </div>
+    <div class="footer-text">&copy; 2026 Eisla. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Waitlist handler (replace with your backend endpoint)
+function handleWaitlist(form) {
+  const email = form.email.value;
+  // TODO: Replace with your actual endpoint (e.g., Buttondown, ConvertKit, or a simple Railway/Vercel serverless function)
+  // fetch('https://your-api.com/waitlist', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email}) });
+  
+  console.log('Waitlist signup:', email);
+  form.style.display = 'none';
+  const formId = form.id;
+  const successEl = document.getElementById(formId === 'waitlistTop' ? 'successTop' : 'successBottom');
+  successEl.style.display = 'block';
+  
+  // Also hide the note
+  const note = form.nextElementSibling;
+  if (note && note.classList.contains('waitlist-note')) note.style.display = 'none';
+  
+  return false;
+}
+</script>
+</body>
+</html>
