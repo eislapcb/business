@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Eisla — From words to boards</title>
-<meta name="description" content="Describe your project in plain English. We design the PCB and arrange manufacturing. You receive boards. No engineering knowledge required.">
+<meta name="description" content="Describe your circuit in plain English. We handle the schematic, layout, and manufacturing. Design in hours, boards in your hands within 1-2 weeks.">
 <meta property="og:title" content="Eisla — From words to boards">
-<meta property="og:description" content="AI-powered PCB design and manufacturing. Describe it. We build it.">
+<meta property="og:description" content="Describe your circuit in plain English. We design and manufacture the PCB. Boards delivered in 1-2 weeks.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 
@@ -16,8 +16,7 @@
   --copper-light: #C27840;
   --copper-pale: #F5E6D5;
   --teal: #0E3D3F;
-  --teal-mid: #0E3D3F;
-  --teal-light: #0E3D3F;
+  --teal-light: #E8F0F0;
   --cream: #FDF8F0;
   --dark: #1A1A1A;
   --mid: #666666;
@@ -87,7 +86,7 @@ body {
 }
 .hero h1 {
   font-size: clamp(36px, 5.5vw, 68px);
-  font-weight: 300;
+  font-weight: 400;
   color: var(--cream);
   line-height: 1.15;
   max-width: 800px;
@@ -118,7 +117,7 @@ body {
   flex: 1;
   padding: 16px 20px;
   border: 2px solid rgba(250,246,241,0.15);
-  border-radius: 8px;
+  border-radius: 6px;
   background: rgba(250,246,241,0.06);
   color: var(--cream);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -133,10 +132,10 @@ body {
   background: var(--copper);
   color: var(--cream);
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.3s, transform 0.2s;
@@ -154,9 +153,9 @@ body {
   padding: 16px 20px;
   background: rgba(194,120,64,0.15);
   border: 1px solid rgba(194,120,64,0.3);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--copper-light);
-  font-weight: 500;
+  font-weight: 700;
   max-width: 480px;
 }
 
@@ -174,7 +173,7 @@ section { padding: 100px 40px; }
 .section-title {
   font-size: clamp(28px, 4vw, 42px);
   font-weight: 700;
-  color: var(--teal);
+  color: var(--copper);
   line-height: 1.2;
   margin-bottom: 20px;
 }
@@ -248,7 +247,7 @@ section { padding: 100px 40px; }
 }
 .price-card {
   background: var(--white);
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 36px 28px;
   border: 2px solid transparent;
   transition: border-color 0.3s, transform 0.3s;
@@ -341,18 +340,18 @@ section { padding: 100px 40px; }
 .story-text em {
   color: var(--copper-light);
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
 }
 .story-quote {
   font-size: clamp(22px, 3vw, 32px);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.4;
   color: var(--cream);
   border-left: 3px solid var(--copper);
   padding-left: 24px;
   margin-top: 32px;
 }
-.story-quote strong { color: var(--copper-light); font-weight: 600; }
+.story-quote strong { color: var(--copper-light); font-weight: 700; }
 
 /* ===== DIFFERENTIATORS ===== */
 .diff { background: var(--white); }
@@ -363,8 +362,8 @@ section { padding: 100px 40px; }
 }
 .diff-card {
   padding: 32px;
-  border-radius: 16px;
-  background: var(--cream);
+  border-radius: 8px;
+  background: var(--teal-light);
   border: 1px solid rgba(14,61,63,0.08);
 }
 .diff-icon {
@@ -467,8 +466,8 @@ section { padding: 100px 40px; }
       </svg>
       <span class="hero-wordmark">Eisla</span>
     </div>
-    <h1>Describe your project.<br><strong>We build the board.</strong></h1>
-    <p class="hero-sub">From a plain-English description to a manufactured circuit board, delivered to your door. Design in hours, boards in your hands within 1&ndash;2 weeks. No engineering knowledge required.</p>
+    <h1>Describe your circuit.<br><strong>We design and manufacture the PCB.</strong></h1>
+    <p class="hero-sub">Describe your circuit in plain English. We&rsquo;ll handle the schematic, layout, and manufacturing. Design in hours, boards in your hands within 1&ndash;2 weeks.</p>
     <form class="waitlist" id="waitlistTop" onsubmit="return handleWaitlist(this)">
       <input type="email" name="email" placeholder="you@example.com" required autocomplete="email">
       <button type="submit">Join the waitlist</button>
@@ -483,7 +482,7 @@ section { padding: 100px 40px; }
   <div class="section-inner">
     <div class="section-label reveal">How it works</div>
     <h2 class="section-title reveal">Four steps. Zero engineering.</h2>
-    <p class="section-desc reveal">You describe what you need. We handle everything else &mdash; from component selection to manufacturing and delivery.</p>
+    <p class="section-desc reveal">You describe what you need. We handle everything else &mdash; from component selection to manufacturing and delivery. Every board is reviewed by a qualified engineer before manufacture.</p>
     <div class="steps">
       <div class="step reveal">
         <div class="step-num">1</div>
