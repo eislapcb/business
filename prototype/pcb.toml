@@ -1,0 +1,7 @@
+[workspace]
+repository = "https://github.com/eislapcb/business"
+pcb-version = "0.1.0"
+members = ["modules/*", "boards/*"]
+
+[dependencies]
+"github.com/diodeinc/registry" = "0.1.0"

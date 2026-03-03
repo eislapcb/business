@@ -1,0 +1,81 @@
+# BuckConverter5V.zen — 5V buck converter for higher-current applications
+# Steps down 7–24V input to regulated 5V output.
+# Suitable for boards requiring >500 mA on the 5V rail.
+
+load("@stdlib/generics/Capacitor.zen", "Capacitor")
+load("@stdlib/generics/Resistor.zen", "Resistor")
+load("@stdlib/generics/Inductor.zen", "Inductor")
+load("@stdlib/generics/Diode.zen", "Diode")
+load("@stdlib/units.zen", "Voltage", "Resistance")
+
+BuckSymbol = Symbol(
+    name = "TPS54331",
+    definition = [
+        ("VIN",   ["1"]),
+        ("BOOT",  ["2"]),
+        ("PH",    ["3"]),
+        ("GND",   ["4", "9"]),
+        ("VSNS",  ["5"]),
+        ("COMP",  ["6"]),
+        ("EN",    ["7"]),
+        ("SS",    ["8"]),
+    ],
+)
+
+vin, vout, gnd = io(
+    vin  = Net("VIN", voltage = Voltage("7V to 24V")),
+    vout = Net("VOUT_5V", voltage = Voltage("5V")),
+    gnd  = Net("GND"),
+)
+
+boot_net = Net("BOOT")
+ph_net   = Net("PH")
+vsns_net = Net("VSNS")
+comp_net = Net("COMP")
+ss_net   = Net("SS")
+
+# Input capacitors
+Capacitor(name = "C_IN1", value = "10uF", P1 = vin, P2 = gnd)
+Capacitor(name = "C_IN2", value = "100nF", P1 = vin, P2 = gnd)
+
+# Buck converter IC
+Component(
+    name   = "U_BUCK",
+    symbol = BuckSymbol,
+    pins   = {
+        "VIN":  vin,
+        "BOOT": boot_net,
+        "PH":   ph_net,
+        "GND":  gnd,
+        "VSNS": vsns_net,
+        "COMP": comp_net,
+        "EN":   vin,       # enable tied to input
+        "SS":   ss_net,
+    },
+    mpn = "TPS54331",
+)
+
+# Bootstrap capacitor
+Capacitor(name = "C_BOOT", value = "100nF", P1 = boot_net, P2 = ph_net)
+
+# Output inductor
+Inductor(name = "L1", value = "15uH", P1 = ph_net, P2 = vout)
+
+# Catch diode
+Diode(name = "D1", P1 = gnd, P2 = ph_net, mpn = "SS34")
+
+# Output capacitors
+Capacitor(name = "C_OUT1", value = "47uF",  P1 = vout, P2 = gnd)
+Capacitor(name = "C_OUT2", value = "100nF", P1 = vout, P2 = gnd)
+
+# Feedback divider — sets output to 5V
+# VSNS = VOUT * R_FB2 / (R_FB1 + R_FB2), target 0.8V reference
+Resistor(name = "R_FB1", value = "52.3k", P1 = vout,     P2 = vsns_net)
+Resistor(name = "R_FB2", value = "10k",   P1 = vsns_net,  P2 = gnd)
+
+# Soft-start capacitor
+Capacitor(name = "C_SS", value = "10nF", P1 = ss_net, P2 = gnd)
+
+# Compensation network
+Resistor(name  = "R_COMP", value = "15k",  P1 = comp_net, P2 = Net())
+Capacitor(name = "C_COMP", value = "4.7nF", P1 = comp_net, P2 = gnd)

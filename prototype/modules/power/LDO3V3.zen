@@ -1,0 +1,39 @@
+# LDO3V3.zen — 3.3V LDO voltage regulator module
+# Provides regulated 3.3V output from 5V–12V input.
+# Suitable for Tier 1–3 MCU power rails.
+
+load("@stdlib/generics/Capacitor.zen", "Capacitor")
+load("@stdlib/generics/Resistor.zen", "Resistor")
+load("@stdlib/units.zen", "Voltage", "Resistance", "Capacitance")
+
+RegulatorSymbol = Symbol(
+    name = "AMS1117-3.3",
+    definition = [
+        ("VIN",  ["1"]),
+        ("VOUT", ["2"]),
+        ("GND",  ["3"]),
+    ],
+)
+
+vin, vout, gnd = io(
+    vin  = Net("VIN", voltage = Voltage("5V to 12V")),
+    vout = Net("VOUT_3V3", voltage = Voltage("3.3V")),
+    gnd  = Net("GND"),
+)
+
+# Input bulk capacitor — stabilise incoming supply
+Capacitor(name = "C_IN", value = "10uF", P1 = vin, P2 = gnd)
+
+# LDO regulator
+Component(
+    name   = "U_REG",
+    symbol = RegulatorSymbol,
+    pins   = {"VIN": vin, "VOUT": vout, "GND": gnd},
+    mpn    = "AMS1117-3.3",
+)
+
+# Output decoupling — datasheet minimum 22 uF
+Capacitor(name = "C_OUT", value = "22uF", P1 = vout, P2 = gnd)
+
+# Additional high-frequency bypass
+Capacitor(name = "C_HF", value = "100nF", P1 = vout, P2 = gnd)

@@ -1,0 +1,20 @@
+# StatusLED.zen — Single status LED with current-limiting resistor
+# Configurable GPIO-driven indicator.
+
+load("@stdlib/generics/Resistor.zen", "Resistor")
+load("@stdlib/generics/LED.zen", "LED")
+load("@stdlib/units.zen", "Voltage")
+
+gpio, vcc, gnd = io(
+    gpio = Net("LED_GPIO"),
+    vcc  = Net("VCC", voltage = Voltage("3.3V")),
+    gnd  = Net("GND"),
+)
+
+led_anode = Net("LED_A")
+
+# Current-limiting resistor — ~10 mA at 3.3V with ~2V Vf
+Resistor(name = "R_LED", value = "120", P1 = gpio, P2 = led_anode)
+
+# LED
+LED(name = "LED1", A = led_anode, K = gnd, color = "green")
