@@ -1,0 +1,92 @@
+# USBTypeC.zen — USB Type-C connector with ESD protection
+# Provides USB 2.0 data and 5V power input via Type-C connector.
+# CC resistors set device mode (sink / UFP).
+
+load("@stdlib/generics/Capacitor.zen", "Capacitor")
+load("@stdlib/generics/Resistor.zen", "Resistor")
+load("@stdlib/units.zen", "Voltage", "Impedance")
+
+ConnectorSymbol = Symbol(
+    name = "USB_C_Receptacle",
+    definition = [
+        ("VBUS",  ["A4", "B4", "A9", "B9"]),
+        ("GND",   ["A1", "A12", "B1", "B12"]),
+        ("CC1",   ["A5"]),
+        ("CC2",   ["B5"]),
+        ("DP1",   ["A6"]),
+        ("DN1",   ["A7"]),
+        ("DP2",   ["B6"]),
+        ("DN2",   ["B7"]),
+        ("SBU1",  ["A8"]),
+        ("SBU2",  ["B8"]),
+        ("SHIELD",["S1", "S2", "S3", "S4"]),
+    ],
+)
+
+ESDSymbol = Symbol(
+    name = "USBLC6-2SC6",
+    definition = [
+        ("IO1",  ["1"]),
+        ("GND",  ["2"]),
+        ("IO2",  ["3"]),
+        ("VBUS", ["4"]),
+        ("IO3",  ["5"]),
+        ("IO4",  ["6"]),
+    ],
+)
+
+USB2 = interface(
+    DP = Net("USB_DP", impedance = Impedance(90)),
+    DN = Net("USB_DN", impedance = Impedance(90)),
+)
+
+vbus, gnd, usb = io(
+    vbus = Net("VBUS", voltage = Voltage("5V")),
+    gnd  = Net("GND"),
+    usb  = USB2("USB"),
+)
+
+cc1_net = Net("CC1")
+cc2_net = Net("CC2")
+
+# USB Type-C connector
+Component(
+    name   = "J_USB",
+    symbol = ConnectorSymbol,
+    pins   = {
+        "VBUS":   vbus,
+        "GND":    gnd,
+        "CC1":    cc1_net,
+        "CC2":    cc2_net,
+        "DP1":    usb.DP,
+        "DN1":    usb.DN,
+        "DP2":    usb.DP,
+        "DN2":    usb.DN,
+        "SBU1":   Net(),
+        "SBU2":   Net(),
+        "SHIELD": gnd,
+    },
+    mpn = "USB4125-GF-A",
+)
+
+# CC pull-downs — 5.1k identifies device as UFP/sink
+Resistor(name = "R_CC1", value = "5.1k", P1 = cc1_net, P2 = gnd)
+Resistor(name = "R_CC2", value = "5.1k", P1 = cc2_net, P2 = gnd)
+
+# ESD protection on data lines
+Component(
+    name   = "U_ESD",
+    symbol = ESDSymbol,
+    pins   = {
+        "IO1":  usb.DP,
+        "GND":  gnd,
+        "IO2":  usb.DN,
+        "VBUS": vbus,
+        "IO3":  usb.DN,
+        "IO4":  usb.DP,
+    },
+    mpn = "USBLC6-2SC6",
+)
+
+# VBUS decoupling
+Capacitor(name = "C_VBUS", value = "10uF", P1 = vbus, P2 = gnd)

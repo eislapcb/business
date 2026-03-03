@@ -1,0 +1,52 @@
+# SWD.zen — ARM Serial Wire Debug header
+# Standard 10-pin Cortex Debug connector (1.27 mm pitch).
+# Directly maps to the MCU's SWDIO/SWCLK lines.
+
+load("@stdlib/generics/Resistor.zen", "Resistor")
+load("@stdlib/units.zen", "Voltage")
+
+HeaderSymbol = Symbol(
+    name = "Conn_ARM_SWD_10Pin",
+    definition = [
+        ("VCC",    ["1"]),
+        ("SWDIO",  ["2"]),
+        ("GND1",   ["3"]),
+        ("SWCLK",  ["4"]),
+        ("GND2",   ["5"]),
+        ("SWO",    ["6"]),
+        ("KEY",    ["7"]),
+        ("TDI",    ["8"]),
+        ("GND3",   ["9"]),
+        ("RESET",  ["10"]),
+    ],
+)
+
+vcc, gnd, swdio, swclk, swo, nreset = io(
+    vcc    = Net("VCC_TARGET", voltage = Voltage("3.3V")),
+    gnd    = Net("GND"),
+    swdio  = Net("SWDIO"),
+    swclk  = Net("SWCLK"),
+    swo    = Net("SWO"),
+    nreset = Net("nRESET"),
+)
+
+Component(
+    name   = "J_SWD",
+    symbol = HeaderSymbol,
+    pins   = {
+        "VCC":   vcc,
+        "SWDIO": swdio,
+        "GND1":  gnd,
+        "SWCLK": swclk,
+        "GND2":  gnd,
+        "SWO":   swo,
+        "KEY":   Net(),
+        "TDI":   Net(),
+        "GND3":  gnd,
+        "RESET": nreset,
+    },
+    mpn = "3220-10-0100-00",
+)
+
+# Pull-up on SWDIO for idle-high
+Resistor(name = "R_SWDIO", value = "10k", P1 = vcc, P2 = swdio)

@@ -1,0 +1,4 @@
+[package]
+name = "debug"
+version = "0.1.0"
+description = "Debug interface modules for Eisla boards"
