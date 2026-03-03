@@ -1,0 +1,7 @@
+[package]
+name = "eisla-simple-board-status-led"
+version = "0.1.0"
+description = "Auto-generated Eisla board: I want a simple RP2040 board with a status LED"
+
+[dependencies]
+"github.com/diodeinc/registry" = "0.1.0"
